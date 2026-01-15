@@ -1,66 +1,71 @@
-import { Button, Checkbox, Flex, Form, Input } from 'antd';
-import { authStore } from '../store/authStore';
-import { useState } from 'react';
+import cls from './login.module.scss';
+
+import { Button, Flex, Form, Input } from 'antd';
+import { authStore } from '../../store/authStore';
 import { useNavigate } from 'react-router';
+import { useState } from 'react';
 
 const onFinishFailed = (errorInfo) => {
   console.log('Failed:', errorInfo);
 };
-export default function Register() {
-  const { registr, isLoading, error } = authStore();
+
+export default function Login() {
+  const { login, isLoading, error } = authStore();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    username: '',
     email: '',
     password: '',
   });
 
   const submit = async () => {
-    await registr(form);
-    navigate('/login');
+    await login(form);
+    navigate('/');
   };
 
   return (
-    <Flex align="center" justify="center">
+    <Flex className={cls.main} justify="center" align="center">
       <Form
+        className={cls.form}
         layout="vertical"
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600, minWidth: '300px' }}
+        style={{ maxWidth: 600, minWidth: 200 }}
         initialValues={{ remember: true }}
         onFinish={submit}
         onFinishFailed={onFinishFailed}
         autoComplete="off">
         <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: 'Пожалуйста, введите ваше имя пользователя!' }]}>
-          <Input onChange={(e) => setForm({ ...form, username: e.target.value })} />
-        </Form.Item>
-
-        <Form.Item
-          label="Email"
+          label={<span style={{ color: 'white' }}>Email</span>}
           name="email"
           rules={[
             { required: true, message: 'Пожалуйста, введите свой адрес электронной почты!' },
           ]}>
-          <Input type="email" onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <Input
+            className={cls.formInput}
+            type="email"
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label={<span style={{ color: 'white' }}>Password</span>}
           name="password"
           rules={[{ required: true, message: 'Пожалуйста, введите свой пароль!' }]}>
-          <Input.Password onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <Input.Password
+            placeholder="введите свой пароль"
+            className={cls.formInput}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+          />
         </Form.Item>
 
         <Form.Item label={null}>
           <Button disabled={isLoading} type="primary" htmlType="submit">
-            Регистрация
+            Войти
           </Button>
         </Form.Item>
+        {error && <p>{error}</p>}
       </Form>
     </Flex>
   );

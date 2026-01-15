@@ -8,6 +8,32 @@ export const authStore = create((set) => ({
   isAuth: false,
   isLoading: false,
   error: null,
+  profile: null,
+
+  logout: async () => {
+    const refreshToken = localStorage.getItem("refreshToken")
+    if (!refreshToken) return
+
+    try {
+      await api.post("/auth/logout", { refreshToken })
+      localStorage.removeItem("refreshToken")
+      set({
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        isAuth: false,
+        profile: null,
+
+      })
+    } catch (er) {
+      console.log(er);
+    }
+  },
+
+  getProfile: async () => {
+    const res = await api.get("/profile")
+    set({ profile: res.data })
+  },
 
   login: async (data) => {
     try {

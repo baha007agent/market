@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { useCategoryStore } from '../../store/cotegoryStore';
 import cls from './profile.module.scss';
 
-import { Avatar, Button, Flex, Input, Select } from 'antd';
+import { Avatar, Button, Input, Select } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 export default function Profile() {

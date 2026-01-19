@@ -37,7 +37,7 @@ export default function Login() {
         onFinishFailed={onFinishFailed}
         autoComplete="off">
         <Form.Item
-          label={<span style={{ color: 'white' }}>Email</span>}
+          label={<span style={{ color: '#8F8F8F' }}>Email</span>}
           name="email"
           rules={[
             { required: true, message: 'Пожалуйста, введите свой адрес электронной почты!' },
@@ -50,7 +50,7 @@ export default function Login() {
         </Form.Item>
 
         <Form.Item
-          label={<span style={{ color: 'white' }}>Password</span>}
+          label={<span style={{ color: '#8F8F8F' }}>Password</span>}
           name="password"
           rules={[{ required: true, message: 'Пожалуйста, введите свой пароль!' }]}>
           <Input.Password
@@ -61,8 +61,8 @@ export default function Login() {
         </Form.Item>
 
         <Form.Item label={null}>
-          <Button disabled={isLoading} type="primary" htmlType="submit">
-            Войти
+          <Button className={cls.btn} disabled={isLoading} type="primary" htmlType="submit">
+            Вход
           </Button>
         </Form.Item>
         {error && <p>{error}</p>}

@@ -23,5 +23,5 @@ export const useCategoryStore = create((set) => ({
     set((state) => ({
       categories: [...state.categories, res.data]
     }))
-  }
+  },
 }))

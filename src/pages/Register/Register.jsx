@@ -37,7 +37,7 @@ export default function Register() {
         onFinishFailed={onFinishFailed}
         autoComplete="off">
         <Form.Item
-          label={<span style={{ color: 'white' }}>Username</span>}
+          label={<span style={{ color: '#8F8F8F' }}>Username</span>}
           name="username"
           rules={[{ required: true, message: 'Пожалуйста, введите ваше имя пользователя!' }]}>
           <Input
@@ -47,7 +47,7 @@ export default function Register() {
         </Form.Item>
 
         <Form.Item
-          label={<span style={{ color: 'white' }}>Email</span>}
+          label={<span style={{ color: '#8F8F8F' }}>Email</span>}
           name="email"
           rules={[
             { required: true, message: 'Пожалуйста, введите свой адрес электронной почты!' },
@@ -60,7 +60,7 @@ export default function Register() {
         </Form.Item>
 
         <Form.Item
-          label={<span style={{ color: 'white' }}>Password</span>}
+          label={<span style={{ color: '#8F8F8F' }}>Password</span>}
           name="password"
           rules={[{ required: true, message: 'Пожалуйста, введите свой пароль!' }]}>
           <Input.Password
@@ -70,7 +70,7 @@ export default function Register() {
         </Form.Item>
 
         <Form.Item label={null}>
-          <Button disabled={isLoading} type="primary" htmlType="submit">
+          <Button className={cls.btn} disabled={isLoading} type="primary" htmlType="submit">
             Регистрация
           </Button>
         </Form.Item>

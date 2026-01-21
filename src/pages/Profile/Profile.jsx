@@ -1,28 +1,34 @@
 import { useEffect, useState } from 'react';
-import { authStore } from '../../store/authStore';
 import { useNavigate } from 'react-router';
-import { useCategoryStore } from '../../store/cotegoryStore';
 import cls from './profile.module.scss';
 
 import { Avatar, Button, Input, Select } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createCategory, getCategories, getProfile } from '../../api/profile';
 
 export default function Profile() {
-  const { getProfile, profile, logout } = authStore();
-  const { categories, getCategories, createCategory } = useCategoryStore();
+  const { data, isLoading } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+  });
+
+  const { data: categories, isLoading: categoryLoading } = useQuery({
+    queryKey: ['category'],
+    queryFn: getCategories,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: createCategory,
+  });
 
   const [catValue, setCatValue] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getProfile();
-    getCategories();
-  }, [getProfile, getCategories]);
-
   const submit = (e) => {
     e.preventDefault();
     if (!catValue) return;
-    createCategory(catValue);
+    mutate(catValue);
     setCatValue('');
   };
 
@@ -35,14 +41,14 @@ export default function Profile() {
     <div className={cls.main}>
       <h2 className={cls.sectionTitle}>My Profile</h2>
 
-      {profile && (
+      {data && (
         <>
           <div className={cls.header}>
-            <div className={cls.profileInfo}>
-              <Avatar size={80} src={profile?.avatar} icon={!profile?.avatar && <UserOutlined />} />
+            <div className={cls.dataInfo}>
+              <Avatar size={80} src={data?.avatar} icon={!data?.avatar && <UserOutlined />} />
               <div>
-                <p className={cls.text}>{profile.username}</p>
-                <p className={cls.email}>{profile.email}</p>
+                <p className={cls.text}>{data.username}</p>
+                <p className={cls.email}>{data.email}</p>
               </div>
             </div>
 

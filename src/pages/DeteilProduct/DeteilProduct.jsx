@@ -1,35 +1,44 @@
-import { useProductStore } from '../../store/productStore';
-import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
 import cls from './deteilProduct.module.scss';
 import { SlBasket } from 'react-icons/sl';
 import { Button } from 'antd';
-import { useCartStore } from '../../store/cartStore';
+import { addToCart } from '../../api/cart';
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
+import { getProductId } from '../../api/products';
 
 export default function DeteilProduct() {
-  const { productDetail, getProductId, isLoading } = useProductStore();
-  const { addToCart } = useCartStore();
-
   const { id } = useParams();
+  const { data: productDetail } = useQuery({
+    queryKey: ['productDetail'],
+    queryFn: () => getProductId(id),
+    enabled: !!id,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: addToCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+  });
 
   console.log(productDetail);
 
-  useEffect(() => {
-    getProductId(id);
-  }, []);
+  // useEffect(() => {
+  //   getProductId(id);
+  // }, [productDetail]);
 
   return (
     <>
       <div className={cls.wrapper}>
         <div className="container">
-          <h1 className={cls.title}>{productDetail.title}</h1>
-          <div key={productDetail.id} className={cls.block}>
+          <h1 className={cls.title}>{productDetail?.title}</h1>
+          <div key={productDetail?.id} className={cls.block}>
             <div className={cls.imgWrapper}>
               <img
                 src={
-                  productDetail.image
-                    ? productDetail.image
+                  productDetail?.image
+                    ? productDetail?.image
                     : 'https://static.vecteezy.com/system/resources/thumbnails/004/141/669/small/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'
                 }
                 alt=""
@@ -37,7 +46,7 @@ export default function DeteilProduct() {
             </div>
             <div className={cls.blockRight}>
               <h5 className={cls.blockRightTitle}>108,99 ₽</h5>
-              <Button onClick={() => addToCart(productDetail.id)} className={cls.btn}>
+              <Button onClick={() => mutate(productDetail?.id)} className={cls.btn}>
                 <SlBasket />В корзину
               </Button>
 

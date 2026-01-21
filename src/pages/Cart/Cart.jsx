@@ -1,16 +1,33 @@
-import { useEffect } from 'react';
-import { useCartStore } from '../../store/cartStore';
 import cls from './cart.module.scss';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
+import {
+  QueryClient,
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { getCart, removeFromCart } from '../../api/cart';
 
 export default function Cart() {
-  const { cart, getCart, isLoading } = useCartStore();
-  const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    getCart();
-  }, []);
+  const { data: cart, isLoading } = useQuery({
+    queryKey: ['cart'],
+    queryFn: getCart,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: removeFromCart,
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      queryClient.setQueryData(['cart'], (old) => {
+        if (!old) return old;
+        return old.filter((item) => item.id !== id);
+      });
+    },
+  });
 
   console.log(cart);
 
@@ -58,10 +75,7 @@ export default function Cart() {
                     <h4>{cart.quantity}</h4>
                     <button>+</button>
                   </div>
-                  <Button
-                    onClick={() => removeFromCart(cart.product?.id)}
-                    color="danger"
-                    variant="solid">
+                  <Button onClick={() => mutate(cart.product?.id)} color="danger" variant="solid">
                     Delete
                   </Button>
 

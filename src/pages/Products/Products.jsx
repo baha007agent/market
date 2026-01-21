@@ -1,15 +1,26 @@
 import { useEffect } from 'react';
-import { useProductStore } from '../../store/productStore';
 import { Button, Col, Row } from 'antd';
 import cls from './products.module.scss';
-import { useCartStore } from '../../store/cartStore';
 import { useNavigate } from 'react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { addToCart } from '../../api/cart';
+import { getProducts } from '../../api/products';
 
 export default function Products() {
-  const { products, getProducts, isLoading } = useProductStore();
-  const { addToCart } = useCartStore();
-
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const { data: products, isLoading } = useQuery({
+    queryKey: 'products',
+    queryFn: getProducts,
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: addToCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+  });
 
   useEffect(() => {
     getProducts();
@@ -48,7 +59,7 @@ export default function Products() {
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
-                      addToCart(product.id);
+                      mutate(product.id);
                     }}
                     className={cls.productsBtn}
                     color="green"

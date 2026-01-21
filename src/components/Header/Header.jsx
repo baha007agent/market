@@ -5,20 +5,31 @@ import cls from './header.module.scss';
 import { Link } from 'react-router';
 import { SlBasket } from 'react-icons/sl';
 import { BsBorderStyle } from 'react-icons/bs';
-import { authStore } from '../../store/authStore';
-import { useEffect } from 'react';
-import { useCategoryStore } from '../../store/cotegoryStore';
-import { useCartStore } from '../../store/cartStore';
+import { useQuery } from '@tanstack/react-query';
+import { getCart } from '../../api/cart';
+import { getCategories, getProfile } from '../../api/profile';
 
 export default function Header() {
-  const { profile, getProfile } = authStore();
-  const { categories, getCategories } = useCategoryStore();
-  const { cart } = useCartStore();
+  // const { profile, getProfile } = authStore();
+  // const { categories, getCategories } = useCategoryStore();
+  // const { cart } = useCartStore();
 
-  useEffect(() => {
-    getProfile();
-    getCategories();
-  }, []);
+  const { data: cart } = useQuery({
+    queryKey: ['cart'],
+    queryFn: getCart,
+  });
+
+  console.log(cart);
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
 
   const onChange = (value) => {
     // console.log(`selected ${value}`);
@@ -61,7 +72,7 @@ export default function Header() {
         <Link style={{ textDecoration: 'none' }} to={'/cart'}>
           <div className={cls.icon}>
             <SlBasket />
-            <span className={cls.count}>{cart.length}</span>
+            <span className={cls.count}>{cart?.length}</span>
             <p>Корзина</p>
           </div>
         </Link>
